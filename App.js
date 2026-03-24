@@ -12,6 +12,7 @@ import DetailsScreen from './src/screens/DetailsScreen';
 import LibraryScreen from './src/screens/LibraryScreen';
 import AudioLibraryScreen from './src/screens/AudioLibraryScreen';
 import ReaderScreen from './src/screens/ReaderScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -86,6 +87,8 @@ export default function App() {
                   iconName = 'headphones';
                 } else if (route.name === 'SearchTab') {
                   iconName = 'magnify';
+                } else if (route.name === 'SettingsTab') {
+                  iconName = 'cog';
                 }
                 return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
               },
@@ -98,6 +101,7 @@ export default function App() {
             <Tab.Screen name="LibraryTab" component={LibraryStack} options={{ title: 'Libros' }} />
             <Tab.Screen name="AudioTab" component={AudioLibraryStack} options={{ title: 'Audio' }} />
             <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Buscar' }} />
+            <Tab.Screen name="SettingsTab" component={SettingsScreen} options={{ title: 'Ajustes' }} />
           </Tab.Navigator>
         </NavigationContainer>
       </PaperProvider>
