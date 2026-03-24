@@ -10,9 +10,7 @@
     "updates": {
       "url": "https://u.expo.dev/d635a752-a7eb-4045-bcec-d0c542e8df2e"
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true

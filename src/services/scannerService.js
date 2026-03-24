@@ -4,7 +4,10 @@ import { Platform } from 'react-native';
 const COMMON_DIRECTORIES = [
   'Download',
   'Documents',
-  'Music'
+  'Music',
+  'Download/Libros',
+  'Books',
+  'Documents/Libros'
 ];
 
 /**
@@ -16,16 +19,16 @@ export const ScannerService = {
     if (Platform.OS === 'web') return { books: [], audio: [] };
     
     const results = { books: [], audio: [] };
-    // Root points to internal device storage on Android
-    const baseDir = '/storage/emulated/0/';
+    // Prefix with file:// for better compatibility with Expo FileSystem on Android
+    const baseDir = 'file:///storage/emulated/0/';
     
     for (const subDir of COMMON_DIRECTORIES) {
       const path = `${baseDir}${subDir}`;
       try {
+        console.log(`Scanning: ${path}`);
         await this.recursiveScan(path, results);
       } catch (e) {
-        // Some directories might be restricted
-        console.warn(`Could not scan directory ${path}:`, e.message);
+        console.warn(`Could not scan directory ${path}: ${e.message}`);
       }
     }
     

@@ -66,7 +66,21 @@ export default function LibraryScreen({ navigation }) {
       const allFound = [...results.books, ...results.audio];
       
       if (allFound.length === 0) {
-        Alert.alert('Escaneo Finalizado', 'No se encontraron nuevos archivos compatibles en las carpetas comunes.');
+        Alert.alert(
+          'Escaneo Finalizado', 
+          'No se encontraron archivos compatibles.\n\nIMPORTANTE: En Android 11 o superior, debes otorgar el permiso "Acceso a todos los archivos" en los Ajustes del sistema para que esta función pueda trabajar.',
+          [
+            { text: 'Entendido', style: 'default' },
+            { 
+              text: 'Ajustes', 
+              onPress: () => {
+                if (Platform.OS === 'android') {
+                  Linking.openSettings();
+                }
+              }
+            }
+          ]
+        );
       } else {
         let addedCount = 0;
         for (const item of allFound) {
@@ -77,7 +91,7 @@ export default function LibraryScreen({ navigation }) {
         Alert.alert('Escaneo Finalizado', `Se han sincronizado ${addedCount} archivos con tu biblioteca.`);
       }
     } catch (e) {
-      Alert.alert('Error', 'No se pudo realizar el escaneo de archivos locales.');
+      Alert.alert('Error', 'No se pudo realizar el escaneo. Asegúrate de que la app tiene permisos de almacenamiento.');
     } finally {
       setScanning(false);
     }

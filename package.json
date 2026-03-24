@@ -11,8 +11,9 @@
     "lint": "expo lint",
     "postinstall": "patch-package",
     "increment-version": "node scripts/increment-version.js",
+    "build:apk": "eas build --profile preview --platform android --non-interactive",
     "deploy": "npm run increment-version && eas build --platform android --non-interactive",
-    "update-ota": "npm run increment-version && eas update --branch production --message 'Automated update'"
+    "update-ota": "npm run increment-version && eas update --branch preview --message 'Automated update'"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
