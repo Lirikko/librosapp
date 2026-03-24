@@ -1,5 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import { Platform } from 'react-native';
+import { MetadataService } from './metadataService';
 
 const COMMON_DIRECTORIES = [
   'Download',
@@ -58,9 +59,13 @@ export const ScannerService = {
           } else {
             const lower = file.toLowerCase();
             if (lower.endsWith('.pdf') || lower.endsWith('.epub')) {
-              results.books.push(this.formatFile(file, fullPath, false));
+              let book = this.formatFile(file, fullPath, false);
+              book = await MetadataService.enrichBook(book);
+              results.books.push(book);
             } else if (lower.endsWith('.mp3')) {
-              results.audio.push(this.formatFile(file, fullPath, true));
+              let audio = this.formatFile(file, fullPath, true);
+              audio = await MetadataService.enrichBook(audio);
+              results.audio.push(audio);
             }
           }
         } catch (err) {

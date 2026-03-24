@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert, Platform, Linking } from 'react-native';
-import { Text, List, Divider, useTheme, Button, IconButton } from 'react-native-paper';
+import { Text, List, Divider, useTheme, Button, IconButton, Switch } from 'react-native-paper';
 import Constants from 'expo-constants';
 import { ScannerService } from '../services/scannerService';
 import { LibraryService } from '../services/libraryService';
+import { useAppTheme } from '../context/ThemeContext';
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const { isDarkMode, toggleTheme } = useAppTheme();
   const [scanning, setScanning] = useState(false);
 
   const version = Constants.expoConfig?.version || '1.0.0';
@@ -51,10 +53,28 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.colors.surface }]}>
         <IconButton icon="cog" size={40} iconColor={theme.colors.primary} />
         <Text variant="headlineMedium">Ajustes</Text>
       </View>
+
+      <List.Section>
+        <List.Subheader>Personalización</List.Subheader>
+        <List.Item
+          title="Modo Oscuro"
+          description="Alternar entre tema claro y oscuro"
+          left={props => <List.Icon {...props} icon="brightness-6" />}
+          right={() => (
+            <Switch 
+              value={isDarkMode} 
+              onValueChange={toggleTheme} 
+              color={theme.colors.primary} 
+            />
+          )}
+        />
+      </List.Section>
+
+      <Divider />
 
       <List.Section>
         <List.Subheader>Información de la App</List.Subheader>
@@ -86,6 +106,29 @@ export default function SettingsScreen() {
           description="Abrir ajustes para gestionar permisos de archivos"
           left={props => <List.Icon {...props} icon="shield-check-outline" />}
           onPress={() => Linking.openSettings()}
+        />
+        <List.Item
+          title="Limpiar Biblioteca"
+          description="Eliminar todos los libros y datos guardados"
+          descriptionStyle={{ color: theme.colors.error }}
+          left={props => <List.Icon {...props} icon="delete-sweep-outline" color={theme.colors.error} />}
+          onPress={() => {
+            Alert.alert(
+              'Limpiar Todo',
+              '¿Estás seguro? Esto eliminará todos los libros de tu biblioteca y el progreso de lectura.',
+              [
+                { text: 'Cancelar', style: 'cancel' },
+                { 
+                  text: 'Limpiar', 
+                  style: 'destructive', 
+                  onPress: async () => {
+                    await AsyncStorage.clear();
+                    Alert.alert('Completado', 'Se han borrado todos los datos. La app se reiniciará.');
+                  } 
+                }
+              ]
+            );
+          }}
         />
       </List.Section>
 

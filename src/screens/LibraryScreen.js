@@ -6,6 +6,7 @@ import { LibraryService } from '../services/libraryService';
 import { ScannerService } from '../services/scannerService';
 import * as Sharing from 'expo-sharing';
 import { FAB, Portal } from 'react-native-paper';
+import { CardSkeleton } from '../components/Skeleton';
 
 export default function LibraryScreen({ navigation }) {
   const theme = useTheme();
@@ -155,8 +156,13 @@ export default function LibraryScreen({ navigation }) {
       />
       
       {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" />
+        <View style={styles.container}>
+          <FlatList
+            data={[1, 2, 3, 4, 5]}
+            keyExtractor={item => item.toString()}
+            renderItem={() => <CardSkeleton />}
+            contentContainerStyle={styles.list}
+          />
         </View>
       ) : filteredBooks.length === 0 ? (
         <View style={styles.center}>

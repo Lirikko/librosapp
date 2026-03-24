@@ -1,8 +1,9 @@
 import React from 'react';
-import { NavigationContainer, DarkTheme as NavigationDarkTheme } from '@react-navigation/native';
+import { Provider as PaperProvider, MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
+import { ThemeProvider, useAppTheme } from './src/context/ThemeContext';
+import { NavigationContainer, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Provider as PaperProvider, MD3DarkTheme } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -13,17 +14,28 @@ import LibraryScreen from './src/screens/LibraryScreen';
 import AudioLibraryScreen from './src/screens/AudioLibraryScreen';
 import ReaderScreen from './src/screens/ReaderScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import AudioPlayerScreen from './src/screens/AudioPlayerScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const customDarkTheme = {
+const darkPaperTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
     primary: '#BB86FC',
     background: '#121212',
     surface: '#1E1E1E',
+  },
+};
+
+const lightPaperTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#6200ee',
+    background: '#ffffff',
+    surface: '#f5f5f5',
   },
 };
 
@@ -68,43 +80,57 @@ function AudioLibraryStack() {
       }}
     >
       <Stack.Screen name="AudioLibraryHome" component={AudioLibraryScreen} options={{ title: 'Audiolibros' }} />
+      <Stack.Screen name="AudioPlayer" component={AudioPlayerScreen} options={{ headerShown: false, presentation: 'modal' }} />
     </Stack.Navigator>
+  );
+}
+
+function MainApp() {
+  const { isDarkMode } = useAppTheme();
+  
+  const paperTheme = isDarkMode ? darkPaperTheme : lightPaperTheme;
+  const navigationTheme = isDarkMode ? NavigationDarkTheme : NavigationDefaultTheme;
+
+  return (
+    <PaperProvider theme={paperTheme}>
+      <NavigationContainer theme={navigationTheme}>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, size }) => {
+              let iconName;
+              if (route.name === 'LibraryTab') {
+                iconName = 'book-open-variant';
+              } else if (route.name === 'AudioTab') {
+                iconName = 'headphones';
+              } else if (route.name === 'SearchTab') {
+                iconName = 'magnify';
+              } else if (route.name === 'SettingsTab') {
+                iconName = 'cog';
+              }
+              return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: paperTheme.colors.primary,
+            tabBarInactiveTintColor: 'gray',
+            tabBarStyle: { backgroundColor: paperTheme.colors.surface, borderTopWidth: 0 },
+            headerShown: false,
+          })}
+        >
+          <Tab.Screen name="LibraryTab" component={LibraryStack} options={{ title: 'Libros' }} />
+          <Tab.Screen name="AudioTab" component={AudioLibraryStack} options={{ title: 'Audio' }} />
+          <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Buscar' }} />
+          <Tab.Screen name="SettingsTab" component={SettingsScreen} options={{ title: 'Ajustes' }} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <PaperProvider theme={customDarkTheme}>
-        <NavigationContainer theme={NavigationDarkTheme}>
-          <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ color, size }) => {
-                let iconName;
-                if (route.name === 'LibraryTab') {
-                  iconName = 'book-open-variant';
-                } else if (route.name === 'AudioTab') {
-                  iconName = 'headphones';
-                } else if (route.name === 'SearchTab') {
-                  iconName = 'magnify';
-                } else if (route.name === 'SettingsTab') {
-                  iconName = 'cog';
-                }
-                return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-              },
-              tabBarActiveTintColor: '#BB86FC',
-              tabBarInactiveTintColor: 'gray',
-              tabBarStyle: { backgroundColor: '#1E1E1E', borderTopWidth: 0 },
-              headerShown: false,
-            })}
-          >
-            <Tab.Screen name="LibraryTab" component={LibraryStack} options={{ title: 'Libros' }} />
-            <Tab.Screen name="AudioTab" component={AudioLibraryStack} options={{ title: 'Audio' }} />
-            <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Buscar' }} />
-            <Tab.Screen name="SettingsTab" component={SettingsScreen} options={{ title: 'Ajustes' }} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
+      <ThemeProvider>
+        <MainApp />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

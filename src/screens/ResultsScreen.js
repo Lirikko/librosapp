@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, ActivityIndicator, Card, useTheme, Button } from 'react-native-paper';
 import { searchBooks } from '../services/api';
+import { CardSkeleton } from '../components/Skeleton';
 
 export default function ResultsScreen({ route, navigation }) {
   const { query, authorFilter } = route.params;
@@ -51,8 +52,13 @@ export default function ResultsScreen({ route, navigation }) {
 
   if (loading) {
     return (
-      <View style={[styles.center, { backgroundColor: theme.colors.background }]}>
-        <ActivityIndicator animating={true} size="large" />
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <FlatList
+          data={[1, 2, 3, 4, 5]}
+          keyExtractor={(item) => item.toString()}
+          renderItem={() => <CardSkeleton />}
+          contentContainerStyle={styles.list}
+        />
       </View>
     );
   }
