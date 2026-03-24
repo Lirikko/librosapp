@@ -1,0 +1,18 @@
+diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
+--- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
++++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/react/RNGestureHandlerRootView.kt
+@@ -38,11 +38,11 @@
+     super.dispatchTouchEvent(ev)
+   }
+ 
+-  override fun dispatchGenericMotionEvent(event: MotionEvent) =
+-    if (rootViewEnabled && rootHelper!!.dispatchTouchEvent(event)) {
++  override fun dispatchGenericMotionEvent(ev: MotionEvent) =
++    if (rootViewEnabled && rootHelper!!.dispatchTouchEvent(ev)) {
+       true
+     } else {
+-      super.dispatchGenericMotionEvent(event)
++      super.dispatchGenericMotionEvent(ev)
+     }
+ 
+   override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {

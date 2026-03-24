@@ -1,0 +1,106 @@
+import React from 'react';
+import { NavigationContainer, DarkTheme as NavigationDarkTheme } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Provider as PaperProvider, MD3DarkTheme } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import HomeScreen from './src/screens/HomeScreen';
+import ResultsScreen from './src/screens/ResultsScreen';
+import DetailsScreen from './src/screens/DetailsScreen';
+import LibraryScreen from './src/screens/LibraryScreen';
+import AudioLibraryScreen from './src/screens/AudioLibraryScreen';
+import ReaderScreen from './src/screens/ReaderScreen';
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const customDarkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    primary: '#BB86FC',
+    background: '#121212',
+    surface: '#1E1E1E',
+  },
+};
+
+function SearchStack() {
+  return (
+    <Stack.Navigator 
+      initialRouteName="SearchHome"
+      screenOptions={{
+        headerStyle: { backgroundColor: '#1E1E1E' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <Stack.Screen name="SearchHome" component={HomeScreen} options={{ title: 'Buscador' }} />
+      <Stack.Screen name="Results" component={ResultsScreen} options={{ title: 'Resultados' }} />
+      <Stack.Screen name="Details" component={DetailsScreen} options={{ title: 'Detalles' }} />
+    </Stack.Navigator>
+  );
+}
+
+function LibraryStack() {
+  return (
+    <Stack.Navigator 
+      initialRouteName="LibraryHome"
+      screenOptions={{
+        headerStyle: { backgroundColor: '#1E1E1E' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <Stack.Screen name="LibraryHome" component={LibraryScreen} options={{ title: 'Libros' }} />
+      <Stack.Screen name="Reader" component={ReaderScreen} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+}
+
+function AudioLibraryStack() {
+  return (
+    <Stack.Navigator 
+      initialRouteName="AudioLibraryHome"
+      screenOptions={{
+        headerStyle: { backgroundColor: '#1E1E1E' },
+        headerTintColor: '#fff',
+      }}
+    >
+      <Stack.Screen name="AudioLibraryHome" component={AudioLibraryScreen} options={{ title: 'Audiolibros' }} />
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <PaperProvider theme={customDarkTheme}>
+        <NavigationContainer theme={NavigationDarkTheme}>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ color, size }) => {
+                let iconName;
+                if (route.name === 'LibraryTab') {
+                  iconName = 'book-open-variant';
+                } else if (route.name === 'AudioTab') {
+                  iconName = 'headphones';
+                } else if (route.name === 'SearchTab') {
+                  iconName = 'magnify';
+                }
+                return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+              },
+              tabBarActiveTintColor: '#BB86FC',
+              tabBarInactiveTintColor: 'gray',
+              tabBarStyle: { backgroundColor: '#1E1E1E', borderTopWidth: 0 },
+              headerShown: false,
+            })}
+          >
+            <Tab.Screen name="LibraryTab" component={LibraryStack} options={{ title: 'Libros' }} />
+            <Tab.Screen name="AudioTab" component={AudioLibraryStack} options={{ title: 'Audio' }} />
+            <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Buscar' }} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </SafeAreaProvider>
+  );
+}
